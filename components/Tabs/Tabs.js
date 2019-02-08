@@ -1,3 +1,23 @@
+const linkSelectedClass = 'tabs-link-selected'
+const tabSelectedClass = 'tabs-item-selected'
+
+
+class Tabs {
+  constructor(links) {
+    this.links = [];
+    links.forEach(e => this.links.push(new TabLink(e)));
+    this.content = [];
+    this.links.forEach(e => this.content.push(e.tabItem));
+  }
+  selectedLink() {
+    return this.links.filter(e => e.selected())[0];
+  }
+  selectedContent() {
+    return this.content.filter(e => e.selected())[0];
+  }
+}
+
+
 
 class TabLink {
   constructor(element) {
@@ -21,17 +41,23 @@ class TabLink {
   };
 
   select() {
-    // Get all of the elements with the tabs-link class
-    const links = getLinks();
-
-    // Using a loop or the forEach method remove the 'tabs-link-selected' class from all of the links
-    links.forEach(e => e.classList.remove('tabs-link-selected'));
+    //grab single selected link and deselect it
+    const selected = tabs.selectedLink();
+    selected.deselect();
 
     // Add a class named "tabs-link-selected" to this link
-    this.element.classList.add('tabs-link-selected');
+    this.element.classList.add(linkSelectedClass);
     
     // Call the select method on the item associated with this link
     this.tabItem.select();
+  }
+
+  deselect() {
+    this.element.classList.remove(linkSelectedClass);
+    this.tabItem.deselect();
+  }
+  selected() {
+    return this.element.classList.contains(linkSelectedClass);
   }
 }
 
@@ -42,14 +68,16 @@ class TabItem {
   }
 
   select() {
-    // Select all ".tabs-item" elements from the DOM
-    const items = getItems();
-
-    // Remove the class "tabs-item-selected" from each element
-    items.forEach(e => e.classList.remove('tabs-item-selected'));
-    
     // Add a class named "tabs-item-selected" to this element
-    this.element.classList.add('tabs-item-selected');
+    this.element.classList.add(tabSelectedClass);
+  }
+
+  deselect() {
+    this.element.classList.remove(tabSelectedClass);
+  }
+
+  selected() {
+    return this.element.classList.contains(tabSelectedClass);
   }
 }
 
@@ -68,6 +96,8 @@ const getLinks = () => document.querySelectorAll('.tabs-link');
 const getItems = () => document.querySelectorAll('.tabs-item');
 
 links = getLinks();
-links.forEach(e => new TabLink(e));
+// links.forEach(e => new TabLink(e));
+
+tabs = new Tabs(links);
 
 // console.log(links);
